@@ -59,6 +59,7 @@ public class AutorizacionInterceptor implements HandlerInterceptor {
         if ("Encargado".equalsIgnoreCase(perfil)) {
 
             if (ruta.startsWith("/api/productos")
+                    || ruta.startsWith("/api/categorias-productos")
                     || ruta.startsWith("/api/materiales")
                     || ruta.startsWith("/api/proveedores")) {
                 return true;
