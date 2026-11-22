@@ -100,3 +100,33 @@ CREATE TABLE `categoria_producto` (
   UNIQUE KEY `nombre` (`nombre`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+
+CREATE TABLE `producto` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT,
+    `codigo_referencia` VARCHAR(50) NOT NULL,
+    `nombre` VARCHAR(100) NOT NULL,
+    `descripcion` VARCHAR(255) NOT NULL,
+    `marca` VARCHAR(100) NOT NULL,
+    `precio_venta` DECIMAL(10,2) NOT NULL,
+    `categoria_id` BIGINT NOT NULL,
+    `cantidad_disponible` INT NOT NULL DEFAULT 0,
+    `activo` TINYINT(1) NOT NULL DEFAULT 1,
+
+    PRIMARY KEY (`id`),
+
+    UNIQUE KEY `uk_producto_codigo_referencia` (`codigo_referencia`),
+
+    CONSTRAINT `fk_producto_categoria`
+        FOREIGN KEY (`categoria_id`)
+        REFERENCES `categoria_producto` (`id`),
+
+    CONSTRAINT `chk_producto_precio`
+        CHECK (`precio_venta` >= 0),
+
+    CONSTRAINT `chk_producto_existencias`
+        CHECK (`cantidad_disponible` >= 0)
+
+) ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_0900_ai_ci;

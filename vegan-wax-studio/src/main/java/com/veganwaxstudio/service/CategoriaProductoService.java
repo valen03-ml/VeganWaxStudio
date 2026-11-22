@@ -3,6 +3,7 @@ package com.veganwaxstudio.service;
 
 import com.veganwaxstudio.entity.CategoriaProducto;
 import com.veganwaxstudio.repository.CategoriaProductoRepository;
+import com.veganwaxstudio.repository.ProductoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -14,9 +15,15 @@ public class CategoriaProductoService {
     // Repositorio utilizado para acceder a las categorías almacenadas en MySQL.
     private final CategoriaProductoRepository categoriaRepository;
 
-    // Constructor para inyectar el repositorio.
-    public CategoriaProductoService(CategoriaProductoRepository categoriaRepository) {
+    // Repositorio utilizado para comprobar los productos asociados a cada categoría.
+    private final ProductoRepository productoRepository;
+
+    // Constructor para inyectar los repositorios necesarios.
+    public CategoriaProductoService(
+            CategoriaProductoRepository categoriaRepository,
+            ProductoRepository productoRepository) {
         this.categoriaRepository = categoriaRepository;
+        this.productoRepository = productoRepository;
     }
 
     // Registra una nueva categoría después de comprobar que su nombre no esté duplicado.
@@ -96,6 +103,13 @@ public class CategoriaProductoService {
         if (!categoria.getActivo()) {
             throw new IllegalArgumentException(
                     "La categoría ya está desactivada"
+            );
+        }
+
+        // Comprueba que no existan productos activos asociados a la categoría.
+        if (productoRepository.existsByCategoriaIdAndActivoTrue(id)) {
+            throw new IllegalArgumentException(
+                    "No se puede desactivar una categoría que tiene productos activos asociados"
             );
         }
 
